@@ -1,0 +1,24 @@
+<html>
+<head>
+   <title>Desk LED Manager</title>
+   <link href="{{ url_for('static',filename='style.css') }}" rel='stylesheet'>
+</head>
+<body>
+  <div id="color-picker"></div>
+  <table>
+  <tr>
+    <td>HEX</td>
+    <td id="active-color">{{ active_color }}</td>
+  </tr>
+  <tr>
+    <td>RGB</td>
+    <td id="rgb">{{ rgb }}</td>
+  </tr>
+  </table>
+  <button class="button" data-type="rainbow">Rainbow</button>
+  <button class="button" data-type="cycle">Cycle</button>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+  <script src="{{ url_for('static',filename='colorpicker.js')}}"></script>
+  <script src="{{ url_for('static',filename='script.js')}}"></script>
+</body>
+</html>
