@@ -8,7 +8,7 @@ from multiprocessing import Process
 from threading import Thread
 
 #SETTINGS
-active_color = (72, 219, 251)
+active_color = [72, 219, 251]
 # Control if motion sensor is functional
 motion_enabled = True
 # LED color for motion animation
@@ -33,33 +33,23 @@ def index():
 
 @app.route('/color-change', methods=['POST'])
 def colorChange():
-   clearAnimations()
+   global active_color
+   active_color[0] = int(request.form.get('r'))
+   active_color[1] = int(request.form.get('g'))
+   active_color[2] = int(request.form.get('b'))
    fill(int(request.form.get('r')), int(request.form.get('g')), int(request.form.get('b')))
    return "success"
 
 @app.route('/animation', methods =['POST'])
 def animations():
-  global active_animation
-  clearAnimations()
-  active_animation[request.form.get('type')] = True
-  t = Thread(target=animate)
-  t.start()
-  print(active_animation)
+  animate(request.form.get('type'))
   return "success"
 
-def clearAnimations():
-  global active_animation
-  for k, v in active_animation.items():
-    active_animation[k] = False
-  fill(0, 0, 0)
-
-def animate():
-  global active_animation
-  print(active_animation)
-  if active_animation['rainbow']:
+def animate(type):
+  if type == 'rainbow':
     rainbow_cycle(0.001)
-  elif active_animation['cycle']:
-    cylon(251, 5, 26, 50)
+  elif type == 'cycle':
+    cylon(72, 219, 251, 100)
 
 if __name__ == '__main__':
   last_motion=-1
@@ -76,11 +66,13 @@ if __name__ == '__main__':
     # If motion is detected and lights are not already on
     if pir.motion_detected and motion_enabled and not output:
       output = True
-      cylon(251, 5, 26, 50)
+      #un comment below line to add cylon animation to motion wakeup
+      #cylon(251, 5, 26, 50)
       linear_gradient("#000000", RGB_to_hex(motion_color))
       linear_gradient(RGB_to_hex(motion_color), "#000000")
       linear_gradient("#000000", RGB_to_hex(active_color))
       last_motion=current_timestamp
+      fill(active_color[0], active_color[1], active_color[2])
     # If motion detected and it's enabled, reset counter
     if pir.motion_detected and motion_enabled and output:
       last_motion=current_timestamp
